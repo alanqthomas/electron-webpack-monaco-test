@@ -47,18 +47,31 @@ export default merge(baseConfig, {
 
   target: 'electron-renderer',
 
-  entry: [
-    'core-js',
-    'regenerator-runtime/runtime',
-    ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
-    `webpack-dev-server/client?http://localhost:${port}/`,
-    'webpack/hot/only-dev-server',
-    require.resolve('../app/index.tsx'),
-  ],
+  entry: {
+    app: [
+      'core-js',
+      'regenerator-runtime/runtime',
+      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
+      `webpack-dev-server/client?http://localhost:${port}/`,
+      'webpack/hot/only-dev-server',
+      require.resolve('../app/index.tsx'),
+    ],
+    'editor.worker': 'monaco-editor/esm/vs/editor/editor.worker.js',
+    todoLangWorker: require.resolve('../app/editor/todolang.worker.ts'),
+  },
 
   output: {
     publicPath: `http://localhost:${port}/dist/`,
-    filename: 'renderer.dev.js',
+    filename: (chunkData) => {
+      switch (chunkData.chunk.name) {
+        case 'editor.worker':
+          return 'editor.worker.js';
+        case 'todoLangWorker':
+          return 'todoLangWorker.js';
+        default:
+          return 'renderer.dev.js';
+      }
+    },
   },
 
   module: {

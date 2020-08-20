@@ -4,9 +4,13 @@ import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
 import { history, configuredStore } from './store';
 import './app.global.css';
 
+import { setupLanguage } from './editor/setup';
+
 const store = configuredStore();
 
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
+
+setupLanguage();
 
 document.addEventListener('DOMContentLoaded', () => {
   // eslint-disable-next-line global-require
